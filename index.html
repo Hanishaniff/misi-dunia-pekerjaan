@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Misi Dunia Pekerjaan</title>
+<style>
+:root {
+  --site-primary: #2459A9;
+  --site-on-primary: #FFFFFF;
+  --site-secondary: #F6C85F;
+  --site-on-secondary: #25324A;
+  --site-background: #F1F6FF;
+  --site-on-background: #1D2A42;
+  --site-font-body: "Trebuchet MS", Arial, sans-serif;
+  --site-font-heading: "Trebuchet MS", Arial, sans-serif;
+  --site-heading-scale: 1;
+  --site-spacing-scale: 1;
+  --site-radius-scale: 1;
+  --site-decoration-opacity: 1;
+  --surface: #FFFFFF;
+  --muted: #61708B;
+  --line: #D8E4F7;
+  --good: #1D8A61;
+  --bad: #B74747;
+}
+* { box-sizing: border-box; }
+body { margin: 0; font-family: var(--site-font-body); color: var(--site-on-background); background: var(--site-background); }
+#app { min-height: 100vh; width: 100%; background-color: var(--site-background); padding: calc(22px * var(--site-spacing-scale)); position: relative; overflow: hidden; }
+.decoration { position: absolute; opacity: var(--site-decoration-opacity); pointer-events: none; font-size: 48px; }
+.deco1 { top: 16px; right: 4%; transform: rotate(12deg); }
+.deco2 { bottom: 22px; left: 2%; transform: rotate(-12deg); }
+.shell { max-width: 820px; margin: 0 auto; position: relative; }
+.hero { background: var(--site-primary); color: var(--site-on-primary); border-radius: calc(26px * var(--site-radius-scale)); padding: 26px 24px; position: relative; overflow: hidden; }
+.eyebrow { text-transform: uppercase; letter-spacing: 1.8px; font-size: 12px; font-weight: 800; opacity: .88; }
+h1 { font-family: var(--site-font-heading); font-size: calc(34px * var(--site-heading-scale)); line-height: 1.1; margin: 9px 0 10px; }
+.hero p { margin: 0; line-height: 1.5; max-width: 580px; }
+.pill { display: inline-flex; align-items: center; gap: 6px; background: var(--site-secondary); color: var(--site-on-secondary); border-radius: 999px; padding: 7px 12px; font-size: 12px; font-weight: 800; margin-top: 16px; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: calc(22px * var(--site-radius-scale)); padding: 22px; margin-top: 18px; box-shadow: 0 7px 24px rgba(36,89,169,.07); }
+.name-row { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: end; }
+label { display: block; font-size: 14px; font-weight: 800; margin-bottom: 7px; }
+input { width: 100%; border: 2px solid var(--line); border-radius: 13px; padding: 13px 14px; font: inherit; font-size: 16px; color: var(--site-on-background); background: var(--surface); }
+button { border: 0; border-radius: 14px; padding: 13px 18px; font: inherit; font-weight: 800; cursor: pointer; transition: transform .12s ease, filter .12s ease; }
+button:hover { filter: brightness(.97); }
+button:active { transform: scale(.98); }
+.primary { background: var(--site-primary); color: var(--site-on-primary); }
+.secondary { background: #E9F0FC; color: var(--site-primary); }
+.full { width: 100%; margin-top: 14px; }
+.small-note { color: var(--muted); font-size: 13px; line-height: 1.45; margin: 12px 0 0; }
+.hidden { display: none !important; }
+.progress-wrap { display: flex; justify-content: space-between; gap: 12px; font-size: 13px; font-weight: 800; color: var(--muted); margin-bottom: 10px; }
+.progress { height: 9px; background: #E9EFF9; border-radius: 999px; overflow: hidden; margin-bottom: 20px; }
+.progress-fill { height: 100%; background: var(--site-secondary); width: 0%; transition: width .25s ease; border-radius: inherit; }
+.category { display: inline-block; padding: 6px 10px; background: #EEF4FF; color: var(--site-primary); border-radius: 999px; font-size: 12px; font-weight: 900; }
+.question { font-size: calc(24px * var(--site-heading-scale)); line-height: 1.25; margin: 13px 0 18px; }
+.choices { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px; }
+.choice { min-height: 112px; display: flex; align-items: center; gap: 12px; text-align: left; border: 2px solid var(--line); background: var(--surface); color: var(--site-on-background); padding: 15px; border-radius: 17px; font-size: 16px; }
+.choice .emoji { font-size: 34px; width: 44px; text-align: center; flex-shrink: 0; }
+.choice:focus-visible, button:focus-visible, input:focus-visible { outline: 3px solid #F6C85F; outline-offset: 3px; }
+.choice.correct { border-color: var(--good); background: #ECF9F2; }
+.choice.wrong { border-color: var(--bad); background: #FFF0F0; }
+.choice:disabled { cursor: default; }
+.feedback { margin-top: 15px; padding: 13px 15px; border-radius: 13px; font-weight: 800; line-height: 1.45; }
+.feedback.good { background: #E7F7EE; color: #176A4A; }
+.feedback.bad { background: #FFF0F0; color: #963939; }
+.question-footer { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 17px; }
+.scoreline { font-weight: 900; color: var(--site-primary); }
+.result-icon { font-size: 70px; text-align: center; }
+.result-title { font-size: 30px; text-align: center; margin: 5px 0 8px; }
+.result-sub { text-align: center; color: var(--muted); line-height: 1.5; }
+.score-card { background: #F7FAFF; border: 2px dashed #B9CDEE; border-radius: 18px; padding: 18px; margin: 18px 0; text-align: center; }
+.big-score { font-size: 42px; color: var(--site-primary); font-weight: 900; }
+.result-details { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.stat { background: #F7FAFF; border-radius: 14px; padding: 13px 8px; text-align: center; }
+.stat strong { display: block; font-size: 20px; }
+.stat span { display: block; font-size: 12px; color: var(--muted); margin-top: 3px; }
+.name-result { text-align: center; font-weight: 900; font-size: 18px; }
+.result-instructions { background: #FFF8E4; color: #5B4A20; padding: 14px; border-radius: 14px; font-size: 14px; line-height: 1.5; margin-top: 16px; }
+.footer { text-align: center; color: var(--muted); font-size: 12px; padding: 20px 0 6px; }
+@media (max-width: 560px) {
+ #app { padding: 12px; }
+ .hero { padding: 22px 18px; }
+ h1 { font-size: calc(29px * var(--site-heading-scale)); }
+ .panel { padding: 16px; }
+ .name-row { grid-template-columns: 1fr; }
+ .name-row button { width: 100%; }
+ .choices { grid-template-columns: 1fr; }
+ .choice { min-height: 82px; }
+ .question { font-size: calc(22px * var(--site-heading-scale)); }
+ .result-details { gap: 6px; }
+}
+@media (prefers-color-scheme: dark) {
+ :root { --surface: #17243A; --site-background: #101B2D; --site-on-background: #F2F6FF; --line: #354765; --muted: #B5C2D9; }
+ .secondary { background: #263A5A; color: #E8F0FF; }
+ .category { background: #263A5A; color: #E8F0FF; }
+ .choice.correct { background: #173D31; }
+ .choice.wrong { background: #49292E; }
+ .progress { background: #263A5A; }
+ .score-card, .stat { background: #1D2B42; }
+ .result-instructions { background: #403820; color: #FFF0C0; }
+}
+</style>
+</head>
+<body>
+<main id="app">
+  <div class="decoration deco1" aria-hidden="true">⭐</div>
+  <div class="decoration deco2" aria-hidden="true">🧸</div>
+  <div class="shell">
+    <header class="hero">
+      <div class="eyebrow">Permainan pembelajaran prasekolah</div>
+      <h1>🧑‍🚒 Misi Dunia Pekerjaan</h1>
+      <p>Jom kenali pekerjaan, alatan, nombor dan tugas mereka. Jawab soalan satu demi satu dan kumpulkan bintang!</p>
+      <div class="pill">🎯 10 soalan • 🌈 Pelbagai bidang</div>
+    </header>
+
+    <section id="startPanel" class="panel">
+      <h2 style="margin:0 0 8px">Sedia untuk misi?</h2>
+      <p style="margin:0 0 18px; color:var(--muted); line-height:1.5">Minta ibu bapa atau penjaga membimbing anak membaca soalan. Pilih satu jawapan bagi setiap soalan.</p>
+      <div class="name-row">
+        <div>
+          <label for="childName">Nama murid</label>
+          <input id="childName" type="text" maxlength="60" placeholder="Taip nama murid di sini" autocomplete="name">
+        </div>
+        <button id="startBtn" class="primary">Mula bermain 🚀</button>
+      </div>
+      <p class="small-note">Aktiviti merangkumi Bahasa Melayu, Matematik Awal, pengetahuan dunia sekeliling dan pemikiran logik.</p>
+    </section>
+
+    <section id="gamePanel" class="panel hidden" aria-live="polite">
+      <div class="progress-wrap"><span id="questionCount">Soalan 1 daripada 10</span><span id="liveScore">⭐ 0 mata</span></div>
+      <div class="progress"><div id="progressFill" class="progress-fill"></div></div>
+      <span id="category" class="category">Kenali Pekerjaan</span>
+      <h2 id="questionText" class="question">Siapakah saya?</h2>
+      <div id="choices" class="choices"></div>
+      <div id="feedback" class="feedback hidden" role="status"></div>
+      <div class="question-footer"><span class="scoreline" id="encouragement">Kamu boleh!</span><button id="nextBtn" class="primary hidden">Soalan seterusnya ➜</button></div>
+    </section>
+
+    <section id="resultPanel" class="panel hidden" aria-live="polite">
+      <div class="result-icon" id="resultIcon">🏆</div>
+      <h2 class="result-title" id="resultTitle">Syabas!</h2>
+      <p class="result-sub">Misi Dunia Pekerjaan telah selesai.</p>
+      <p class="name-result" id="resultName"></p>
+      <div class="score-card"><div>Markah kamu</div><div class="big-score" id="finalScore">0/10</div><div id="percent">0% betul</div></div>
+      <div class="result-details">
+        <div class="stat"><strong id="correctCount">0</strong><span>Jawapan betul</span></div>
+        <div class="stat"><strong>10</strong><span>Jumlah soalan</span></div>
+        <div class="stat"><strong id="stars">☆☆☆</strong><span>Bintang</span></div>
+      </div>
+      <div class="result-instructions"><strong>📸 Arahan penghantaran:</strong> Ibu bapa/penjaga diminta mengambil tangkapan skrin halaman keputusan ini yang memaparkan nama murid dan markah. Hantarkan gambar tersebut ke Telegram kumpulan Homework/PdPR kelas.</div>
+      <button id="restartBtn" class="primary full">Main semula 🔁</button>
+      <button id="printBtn" class="secondary full">Cetak / Simpan keputusan</button>
+    </section>
+    <div class="footer">Belajar sambil bermain • Dunia Pekerjaan</div>
+  </div>
+</main>
+<script>
+const questions = [
+ {cat:'Kenali Pekerjaan', q:'Saya merawat orang yang sakit. Siapakah saya?', choices:[['👩‍⚕️','Doktor'],['👨‍🍳','Tukang masak'],['👨‍🏫','Guru'],['👮','Polis']], answer:0, explain:'Betul! Doktor membantu merawat orang yang sakit.'},
+ {cat:'Alatan Pekerjaan', q:'Alatan manakah digunakan oleh guru?', choices:[['📚','Buku'],['🧯','Alat pemadam api'],['🍳','Kuali'],['🪚','Gergaji']], answer:0, explain:'Ya! Guru menggunakan buku untuk membantu pengajaran dan pembelajaran.'},
+ {cat:'Padankan Tugas', q:'Siapakah yang membantu memadamkan kebakaran?', choices:[['👨‍🚒','Anggota bomba'],['👨‍🌾','Petani'],['✂️','Tukang gunting'],['🧑‍🍳','Tukang masak']], answer:0, explain:'Hebat! Anggota bomba membantu memadamkan kebakaran dan menyelamatkan orang.'},
+ {cat:'Matematik Awal', q:'Ada 2 topi keselamatan dan 3 lagi topi. Berapakah jumlah topi semuanya?', choices:[['4','4 topi'],['5','5 topi'],['6','6 topi'],['3','3 topi']], answer:1, explain:'Bagus! 2 tambah 3 ialah 5.'},
+ {cat:'Tempat Kerja', q:'Di manakah doktor biasanya bekerja?', choices:[['🏥','Hospital atau klinik'],['🏫','Sekolah sahaja'],['🚒','Balai bomba'],['🌾','Sawah padi']], answer:0, explain:'Betul! Doktor boleh bekerja di hospital atau klinik.'},
+ {cat:'Kenali Pekerjaan', q:'Saya menanam sayur dan menjaga tanaman. Siapakah saya?', choices:[['👨‍🌾','Petani'],['👨‍✈️','Juruterbang'],['👮','Polis'],['🧑‍🏫','Guru']], answer:0, explain:'Tepat! Petani menanam tanaman dan menjaga hasil pertanian.'},
+ {cat:'Alatan Pekerjaan', q:'Apakah yang digunakan oleh tukang masak untuk menggoreng telur?', choices:[['🍳','Kuali'],['📖','Buku'],['🩺','Stetoskop'],['🚦','Lampu isyarat']], answer:0, explain:'Bagus! Kuali digunakan untuk memasak, tetapi kanak-kanak perlu menjauhi dapur panas.'},
+ {cat:'Keselamatan', q:'Jika terdengar penggera kebakaran, apakah tindakan yang betul?', choices:[['🚶','Berjalan keluar dengan tenang bersama orang dewasa'],['🙈','Bersembunyi dalam almari'],['🏃','Berlari sambil menolak kawan'],['🎒','Berpatah balik mengambil mainan']], answer:0, explain:'Betul! Ikut arahan guru atau orang dewasa dan bergerak ke tempat selamat dengan tenang.'},
+ {cat:'Bahasa dan Bunyi', q:'Perkataan manakah bermula dengan bunyi /g/ seperti guru?', choices:[['🪚','Gergaji'],['📚','Buku'],['🍎','Epal'],['🧹','Penyapu']], answer:0, explain:'Pandai! Gergaji bermula dengan bunyi /g/. Alat tajam hanya dikendalikan oleh orang dewasa.'},
+ {cat:'Hormati Semua Pekerjaan', q:'Mengapakah kita menghargai orang yang melakukan pelbagai pekerjaan?', choices:[['🤝','Mereka membantu masyarakat'],['😄','Supaya boleh mengejek mereka'],['🙅','Kerana hanya satu pekerjaan penting'],['🚫','Kerana kita tidak memerlukan bantuan']], answer:0, explain:'Syabas! Setiap pekerjaan yang dilakukan dengan baik boleh membantu masyarakat.'}
+];
+let playerName = '';
+let current = 0;
+let score = 0;
+let answered = false;
+const $ = id => document.getElementById(id);
+function show(id) { $(id).classList.remove('hidden'); }
+function hide(id) { $(id).classList.add('hidden'); }
+$('startBtn').addEventListener('click', () => {
+ playerName = $('childName').value.trim();
+ if (!playerName) { $('childName').focus(); $('childName').placeholder = 'Sila isi nama murid dahulu'; return; }
+ current = 0; score = 0; answered = false;
+ hide('startPanel'); hide('resultPanel'); show('gamePanel'); renderQuestion();
+});
+function renderQuestion() {
+ answered = false;
+ const item = questions[current];
+ $('questionCount').textContent = `Soalan ${current + 1} daripada ${questions.length}`;
+ $('liveScore').textContent = `⭐ ${score} mata`;
+ $('progressFill').style.width = `${(current / questions.length) * 100}%`;
+ $('category').textContent = item.cat;
+ $('questionText').textContent = item.q;
+ $('choices').innerHTML = '';
+ hide('feedback'); hide('nextBtn');
+ $('encouragement').textContent = 'Kamu boleh!';
+ item.choices.forEach((choice, index) => {
+   const button = document.createElement('button');
+   button.type = 'button'; button.className = 'choice';
+   const emoji = document.createElement('span'); emoji.className = 'emoji'; emoji.textContent = choice[0];
+   const label = document.createElement('span'); label.textContent = choice[1];
+   button.append(emoji, label);
+   button.addEventListener('click', () => chooseAnswer(index, button));
+   $('choices').appendChild(button);
+ });
+}
+function chooseAnswer(index, button) {
+ if (answered) return;
+ answered = true;
+ const item = questions[current];
+ const all = [...$('choices').querySelectorAll('button')];
+ all.forEach((b, i) => { b.disabled = true; if (i === item.answer) b.classList.add('correct'); });
+ const feedback = $('feedback');
+ if (index === item.answer) {
+   score++; feedback.className = 'feedback good'; feedback.textContent = `🌟 Betul! ${item.explain}`;
+   $('encouragement').textContent = 'Syabas! Teruskan!';
+ } else {
+   button.classList.add('wrong'); feedback.className = 'feedback bad'; feedback.textContent = `Cuba lagi lain kali. ${item.explain}`;
+   $('encouragement').textContent = 'Jangan putus asa!';
+ }
+ $('liveScore').textContent = `⭐ ${score} mata`;
+ show('feedback');
+ $('nextBtn').textContent = current === questions.length - 1 ? 'Lihat keputusan 🏆' : 'Soalan seterusnya ➜';
+ show('nextBtn');
+}
+$('nextBtn').addEventListener('click', () => {
+ current++;
+ if (current < questions.length) renderQuestion(); else showResult();
+});
+function showResult() {
+ hide('gamePanel'); show('resultPanel');
+ const pct = Math.round((score / questions.length) * 100);
+ $('resultName').textContent = `Nama murid: ${playerName}`;
+ $('finalScore').textContent = `${score}/${questions.length}`;
+ $('percent').textContent = `${pct}% jawapan betul`;
+ $('correctCount').textContent = score;
+ const starCount = score >= 9 ? 3 : score >= 6 ? 2 : score >= 3 ? 1 : 0;
+ $('stars').textContent = '★'.repeat(starCount) + '☆'.repeat(3-starCount);
+ $('resultIcon').textContent = score >= 8 ? '🏆' : score >= 5 ? '🌟' : '💪';
+ $('resultTitle').textContent = score >= 8 ? 'Tahniah, hebat sekali!' : score >= 5 ? 'Syabas, teruskan usaha!' : 'Bagus kerana mencuba!';
+ $('progressFill').style.width = '100%';
+}
+$('restartBtn').addEventListener('click', () => { hide('resultPanel'); show('startPanel'); $('childName').value = playerName; $('childName').focus(); });
+$('printBtn').addEventListener('click', () => window.print());
+$('childName').addEventListener('keydown', e => { if (e.key === 'Enter') $('startBtn').click(); });
+</script>
+</body>
+</html>
